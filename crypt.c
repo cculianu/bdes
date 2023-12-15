@@ -34,11 +34,11 @@
 
 #include <sys/cdefs.h>
 
-#include <limits.h>
+//#include <limits.h>
 #include <pwd.h>
 #include <stdint.h>
-#include <stdlib.h>
-#include <string.h> /* for strcmp */
+//#include <stdlib.h>
+//#include <string.h> /* for strcmp */
 #include <unistd.h>
 #if defined(DEBUG) || defined(MAIN) || defined(UNIT_TEST)
 #include <stdio.h>
@@ -74,7 +74,7 @@
  * long integers at arbitrary (e.g. odd) memory locations.
  * (Either that or never pass unaligned addresses to des_cipher!)
  */
-#if !defined(__vax__) && !defined(__i386__)
+#if !defined(__vax__) && !defined(__i386__) && !defined(__x86_64__)
 #define	MUST_ALIGN
 #endif
 
