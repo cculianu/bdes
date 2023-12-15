@@ -75,7 +75,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-//#include "crypt.h"
+#include "crypt.h"
 
 /*
  * BSD and System V systems offer special library calls that do
@@ -85,7 +85,7 @@
 #define	MEMZERO(dest,len)	bzero((dest),(len))
 
 /* Hide the calls to the primitive encryption routines. */
-//#define	FASTWAY
+#define	FASTWAY
 #ifdef	FASTWAY
 #define	DES_KEY(buf) \
 	if (des_setkey(buf)) \
@@ -97,12 +97,12 @@
 #define	DES_KEY(buf)	do {						\
 				char bits1[64];	/* bits of key */	\
 				expand(buf, bits1);			\
-                                setkey(bits1);				\
+                                my_setkey(bits1);				\
                         } while (0)
 #define	DES_XFORM(buf)	do {						\
 				char bits1[64];	/* bits of message */	\
 				expand(buf, bits1);			\
-                                encrypt(bits1, inverse);		\
+                                my_encrypt(bits1, inverse);		\
 				compress(bits1, buf);			\
                         } while (0)
 #endif
@@ -148,7 +148,7 @@ static int fbbits = -1;			/* number of feedback bits */
 static int pflag;				/* 1 to preserve parity bits */
 
 static int	setbits(char *, int);
-static void	bdes_err(int, const char *) __dead;
+static void	bdes_err(int, const char *);
 static int	tobinhex(char, int);
 static void	cvtkey(char *, char *);
 static void	makekey(Desbuf);
@@ -168,7 +168,7 @@ static void	cfbauth(void);
 static void	expand(Desbuf, char *);
 static void	compress(char *, Desbuf);
 #endif
-static void	usage(void) __dead;
+static void	usage(const char *);
 
 int
 main(int ac, char *av[])
@@ -253,7 +253,7 @@ main(int ac, char *av[])
 			cvtkey(BUFFER(ivec), optarg);
 			break;
 		default:		/* error */
-			usage();
+                        usage("bdes" /* added by calin */);
 		}
 
 	if (!kflag) {
@@ -1055,10 +1055,10 @@ compress(char *from, Desbuf to)
  * message about usage
  */
 static void
-usage(void)
+usage(const char *prog_name)
 {
 
-	(void) fprintf(stderr, "usage: %s %s\n", getprogname(),
+        (void) fprintf(stderr, "usage: %s %s\n", prog_name,
 	    "[-abdp] [-F bit] [-f bit] [-k key] [-m bit] [-o bit] [-v vector]");
 	exit(1);
 }
